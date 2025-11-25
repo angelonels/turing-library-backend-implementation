@@ -13,7 +13,7 @@ app.get("/", (req, res) => {
 
 app.post("/api/v1/books", async (req, res) => {
   const body = req.body;
-  console.log("genres", body.genres.map(genre => ({ id: genre })));
+  console.log(body);
   const result = await prisma.book.create({
     data: {
       title: body.title,
@@ -26,7 +26,13 @@ app.post("/api/v1/books", async (req, res) => {
         }
       },
       genres: {
-        connect: body.genres.map(genre => ({ id: genre }))
+        create: body.genres.map(genreId => ({
+          genre: {
+            connect: {
+              id: genreId
+            }
+          }
+        }))
       }
     }
   })
@@ -34,5 +40,5 @@ app.post("/api/v1/books", async (req, res) => {
 })
 
 app.listen(3001, () => {
-  console.log("Server started on port 3000")
+  console.log("Server started on port 3001")
 });
